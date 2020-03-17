@@ -1,0 +1,275 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>洛谷 P6205 题解 | Gridea</title>
+<link rel="shortcut icon" href="https://YCE3216037.github.io/favicon.ico?v=1584448056213">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://YCE3216037.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="洛谷 P6205 题解 | Gridea - Atom Feed" href="https://YCE3216037.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="推销一下我的新博客：https://yce3216037.github.io/post/luo-gu-p6205-ti-jie/
+这道题目一看，就是一道背包裸题，用完全背包的方法求方案数即可，我以为开了LL就不会见祖宗了，我就写了这样的代码..." />
+    <meta name="keywords" content="题解" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://YCE3216037.github.io">
+  <img class="avatar" src="https://YCE3216037.github.io/images/avatar.png?v=1584448056213" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              洛谷 P6205 题解
+            </h2>
+            <div class="post-info">
+              <span>
+                2020-03-17
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+                <a href="https://YCE3216037.github.io/tag/FxiZxcLA2/" class="post-tag">
+                  # 题解
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>推销一下我的新博客：https://yce3216037.github.io/post/luo-gu-p6205-ti-jie/</p>
+<p>这道题目一看，就是一道背包裸题，用完全背包的方法求方案数即可，我以为开了LL就不会见祖宗了，我就写了这样的代码：</p>
+<pre><code class="language-cpp">#include&lt;cstdio&gt;
+#define ll long long
+using namespace std;
+const int N = 1000 + 10;
+FILE *fin, *fout;
+inline int read(ll &amp;x) {//快读
+	char c = 0; int f = x = 0;
+	while (c &lt; 48 || c &gt; 57) {
+		if (c == -1) return 0;
+		if (c == '-') f = 1; c = fgetc(fin);
+	}
+	while (c &gt; 47 &amp;&amp; c &lt; 58) x = (x &lt;&lt; 3) + (x &lt;&lt; 1) + (c &amp; 15), c = fgetc(fin);
+	if (f) x = -x; return 1;
+}
+template&lt;class T, class... Args&gt; inline int read(T &amp;x, Args&amp;... args) {
+	return read(x) + read(args...);
+}
+inline int write(ll x) {//快写
+	if (x &lt; 0) return fputc(45, fout), write(-x);
+	if (x &gt; 9) write(x / 10);
+	return fputc((x % 10) | 48, fout), 1;
+}
+ll n, k, dp[N];
+int main() {
+	#ifdef ONLINE_JUDGE
+	fin = stdin;
+	fout = stdout;
+	#else
+	fin = fopen(&quot;P6205.in&quot;, &quot;rb&quot;);
+	fout = fopen(&quot;P6205.out&quot;, &quot;wb&quot;);
+	#endif
+	read(n, k), dp[0] = 1;
+	for (ll i = 1; i &lt;= k; ++i)//完全背包模板，v[i]=i,w[i]=i
+		for (ll j = i; j &lt;= n; ++j)
+			dp[j] += dp[j - i];
+	write(dp[n]);
+	return 0;
+}
+</code></pre>
+<p>WTF？70分？看来不开高精见祖宗了，我为了图卡常，于是写了一个万进制的压位高精！</p>
+<pre><code class="language-cpp">#include&lt;cstdio&gt;
+#include&lt;cstring&gt;
+using namespace std;
+const int N = 1000 + 10;
+const int base = 10000;
+FILE *fin, *fout;
+struct bigint {
+	int a[11];
+	bigint(){memset(a, 0, sizeof(a)), a[0] = 1;}//初始化
+	inline int&amp; operator [](int n) {
+		return a[n];
+	}
+	inline bigint&amp; operator =(int x) {
+		a[0] = 0; if (!x) return a[0] = 1, *this;
+		while (x) a[++a[0]] = x % base, x /= base;
+		return *this;
+	}
+	inline friend bigint operator +(bigint a, bigint b) {//两个数相加
+		if (b[0] &gt; a[0]) a[0] = b[0];
+		for (int i = 1; i &lt;= a[0]; ++i) a[i] += b[i];
+		for (int i = 1; i &lt;= a[0]; ++i) if (a[i] &gt;= base) a[i] -= base, ++a[i + 1];
+		if (a[a[0] + 1]) ++a[0]; return a;
+	}
+	inline friend bigint&amp; operator +=(bigint&amp; a, bigint b) {
+		return a = a + b;
+	}
+};
+inline int read(int &amp;x) {
+	char c = 0; int f = x = 0;
+	while (c &lt; 48 || c &gt; 57) {
+		if (c == -1) return 0;
+		if (c == '-') f = 1; c = fgetc(fin);
+	}
+	while (c &gt; 47 &amp;&amp; c &lt; 58) x = (x &lt;&lt; 3) + (x &lt;&lt; 1) + (c &amp; 15), c = fgetc(fin);
+	if (f) x = -x; return 1;
+}
+template&lt;class T, class... Args&gt; inline int read(T &amp;x, Args&amp;... args) {
+	return read(x) + read(args...);
+}
+inline int write(bigint x) {
+	fprintf(fout, &quot;%d&quot;, x[x[0]]);
+	for (int i = x[0] - 1; i; --i)
+		fprintf(fout, &quot;%04d&quot;, x[i]);
+	return 1;
+}
+int n, k;
+bigint dp[N];
+int main() {
+	#ifdef ONLINE_JUDGE
+	fin = stdin;
+	fout = stdout;
+	#else
+	fin = fopen(&quot;P6205.in&quot;, &quot;rb&quot;);
+	fout = fopen(&quot;P6205.out&quot;, &quot;wb&quot;);
+	#endif
+	read(n, k), dp[0] = 1;
+	for (int i = 1; i &lt;= k; ++i)
+		for (int j = i; j &lt;= n; ++j)
+			dp[j] += dp[j - i];
+	write(dp[n]);
+	return 0;
+}
+</code></pre>
+<p>于是就A了。当然，也可一用<code>__int128</code>来水，但是，只要数据范围拓展至 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>N</mi><mo>≤</mo><mn>2000</mn></mrow><annotation encoding="application/x-tex">N\le2000</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8193em;vertical-align:-0.13597em;"></span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">2</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span></span></span></span>，<code>__int128</code>就炸了，而我的高精度只需要改一点就可以继续使用了。</p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://YCE3216037.github.io/post/luo-gu-p6200-ti-jie/">
+              <h3 class="post-title">
+                洛谷 P6200 题解
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://YCE3216037.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

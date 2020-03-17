@@ -1,0 +1,284 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>洛谷 P6182 题解 | Gridea</title>
+<link rel="shortcut icon" href="https://YCE3216037.github.io/favicon.ico?v=1584448056213">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://YCE3216037.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="洛谷 P6182 题解 | Gridea - Atom Feed" href="https://YCE3216037.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="推销一下我的新博客（但图片可能显示不了）：https://yce3216037.github.io/post/luo-gu-p6182-ti-jie/
+本人想看一下洛谷新增的题目，结果就被我切了，而且是本题首A。如果这一道题只有前两个操作，..." />
+    <meta name="keywords" content="题解" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://YCE3216037.github.io">
+  <img class="avatar" src="https://YCE3216037.github.io/images/avatar.png?v=1584448056213" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              洛谷 P6182 题解
+            </h2>
+            <div class="post-info">
+              <span>
+                2020-03-17
+              </span>
+              <span>
+                6 min read
+              </span>
+              
+                <a href="https://YCE3216037.github.io/tag/FxiZxcLA2/" class="post-tag">
+                  # 题解
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>推销一下我的新博客（但图片可能显示不了）：https://yce3216037.github.io/post/luo-gu-p6182-ti-jie/</p>
+<p>本人想看一下洛谷新增的题目，结果就被我切了，而且是本题首A。如果这一道题只有前两个操作，那么这道题目就是一道很水的模拟题，直接用栈就可以了。然而，有了第三个操作，那么就有点难了，这个我称它为“可持久化栈”。有一种朴素的做法，就是在前两个操作的时候，直接复制上一次的栈的结果，遇到第三种操作，就复制第 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">x-1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.66666em;vertical-align:-0.08333em;"></span><span class="mord mathdefault">x</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span> 次操作的结果，因为说的是第 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">x</span></span></span></span> 次操作前，而不是第 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">x</span></span></span></span> 次操作后，这样，样例模拟如下（为了方便，一开始来一个编号为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">-1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">−</span><span class="mord">1</span></span></span></span> 的奶牛）：</p>
+<pre><code>0 ：-1
+1 ：-1 5
+2 ：-1 5 3
+3 ：-1 5 3 7
+4 ：-1 5 3
+5 ：-1 5
+6 ：-1 5 2
+7 ：-1 5 3 7
+8 ：-1 5 3 7 4
+9 ：-1 5 3 7
+10：-1 5 2
+11：-1 5
+12：-1
+</code></pre>
+<p>但是，这样操作的时间复杂度为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo>(</mo><msup><mi>n</mi><mn>2</mn></msup><mo>)</mo></mrow><annotation encoding="application/x-tex">O(n^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>，空间复杂度也为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo>(</mo><msup><mi>n</mi><mn>2</mn></msup><mo>)</mo></mrow><annotation encoding="application/x-tex">O(n^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>，对于 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi><mo>≤</mo><mn>8</mn><mo>×</mo><mn>1</mn><msup><mn>0</mn><mn>4</mn></msup></mrow><annotation encoding="application/x-tex">n\le 8\times 10^4</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7719400000000001em;vertical-align:-0.13597em;"></span><span class="mord mathdefault">n</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">8</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">4</span></span></span></span></span></span></span></span></span></span></span> 的数据来说，不管从时间还是从空间上来说，都会炸，所以，需要有一个更优的方法。这就要用到我新创的“可持久化栈”了。</p>
+<p>如何实现这个“可持久化栈”呢？我画一个图来模拟一下（图略丑，且有点多，见谅），由于我是先画完再截图的，所以会有多余的线段：</p>
+<p>初始状态（这时候为了减少边界条件判断，还需要再加一个虚拟奶牛，编号任意）：<br>
+<img src="https://cdn.luogu.com.cn/upload/image_hosting/ot01my7n.png" alt="" loading="lazy"><br>
+第1步，插入5号奶牛，直接在上一次的操作后添加一头5号奶牛即可：<br>
+<img src="https://cdn.luogu.com.cn/upload/image_hosting/ffzn8xsd.png" alt="" loading="lazy"><br>
+第2步，插入3号奶牛，和第1步类似：<br>
+<img src="https://cdn.luogu.com.cn/upload/image_hosting/m4fro19g.png" alt="" loading="lazy"><br>
+第3步，插入7号奶牛，和第1步类似：<br>
+<img src="https://cdn.luogu.com.cn/upload/image_hosting/bgbelfzn.png" alt="" loading="lazy"><br>
+第4步，去掉7号奶牛，将在上一次操作的倒数第二头奶牛加在该奶牛的前一个奶牛后面，这样即可去掉最后一头奶牛：<br>
+<img src="https://cdn.luogu.com.cn/upload/image_hosting/m860k1tu.png" alt="" loading="lazy"><br>
+第5步，回到第4次操作前，将第2次操作后的队尾的奶牛加在该奶牛的前一个奶牛后面，即可忽略2至4步：<br>
+<img src="https://cdn.luogu.com.cn/upload/image_hosting/4modz3tq.png" alt="" loading="lazy"><br>
+第6步，插入2号奶牛，和第1步类似：<br>
+<img src="https://cdn.luogu.com.cn/upload/image_hosting/cf1qgdta.png" alt="" loading="lazy"><br>
+第7步，回到第4次操作前，和第5步类似：<br>
+<img src="https://cdn.luogu.com.cn/upload/image_hosting/2tkhpdi3.png" alt="" loading="lazy"><br>
+第8步，插入4号奶牛，和第1步类似：<br>
+<img src="https://cdn.luogu.com.cn/upload/image_hosting/z9bnor14.png" alt="" loading="lazy"><br>
+第9步，去掉4号奶牛，和第4步类似：<br>
+<img src="https://cdn.luogu.com.cn/upload/image_hosting/kgoq0fb9.png" alt="" loading="lazy"><br>
+第10步，回到第7次操作前，和第5步类似：<br>
+<img src="https://cdn.luogu.com.cn/upload/image_hosting/42lyi87t.png" alt="" loading="lazy"><br>
+第11步，去掉2号奶牛，和第4步类似：<br>
+<img src="https://cdn.luogu.com.cn/upload/image_hosting/kd0dj7gt.png" alt="" loading="lazy"><br>
+第12步，去掉5号奶牛，和第4步类似：<br>
+<img src="https://cdn.luogu.com.cn/upload/image_hosting/its7pw3n.png" alt="" loading="lazy"><br>
+由于我想<s>给大家介绍一下指针版如何实现</s>装X，我写一个指针版的。</p>
+<h3 id="代码如下">代码如下：</h3>
+<pre><code class="language-cpp">#include&lt;cstdio&gt;
+using namespace std;
+const int N = 80000 + 10;
+FILE *fin, *fout;
+inline int read(int &amp;x) {//快读
+	char c = 0; int f = x = 0;
+	while (c &lt; 48 || c &gt; 57) {
+		if (c == -1) return 0;
+		if (c == '-') f = 1; c = fgetc(fin);
+	}
+	while (c &gt; 47 &amp;&amp; c &lt; 58) x = (x &lt;&lt; 3) + (x &lt;&lt; 1) + (c &amp; 15), c = fgetc(fin);
+	if (f) x = -x; return 1;
+}
+inline int read(char &amp;c) {
+	c = 0; while (c == 32 || c == 10 || c == 13 || c == 0) c = fgetc(fin);
+	if (c == -1) return 0; return 1;
+}
+inline int write(int x) {//快写
+	if (x &lt; 0) return fputc(45, fout), write(-x);
+	if (x &gt; 9) write(x / 10);
+	return fputc((x % 10) | 48, fout), 1;
+}
+inline int write(char c) {
+	return fputc(c, fout), 1;
+}
+template&lt;class T, class... Args&gt; inline int write(T x, Args... args) {
+	return write(x) + write(args...);
+}
+struct node;
+typedef node* list;//接下来写起来方便
+struct node {
+	int val; list last;//val为奶牛的编号，last为上一头奶牛的位置
+	node(int val = 0, list last = 0): val(val), last(last){}//构造函数
+};
+char opt;
+int n, x;
+list a[N];
+int main() {
+	#ifdef ONLINE_JUDGE
+	fin = stdin;
+	fout = stdout;
+	#else
+	fin = fopen(&quot;P6182.in&quot;, &quot;rb&quot;);
+	fout = fopen(&quot;P6182.out&quot;, &quot;wb&quot;);
+	#endif
+	a[0] = new node(3216037), a[read(n)] = new node(-1, a[0]), ++n;//a[0]甚至可以用1******7代替，read(n)的返回值为1，这里简写
+	for (int i = 2; i &lt;= n; ++i) {//为了方便操作，将n加1，并且i从2开始
+		read(opt);
+		if (opt == 's') a[i] = new node(a[i - 1]-&gt;last-&gt;val, a[i - 1]-&gt;last-&gt;last);//删除
+		else {
+			read(x); if (opt == 'a') a[i] = new node(x, a[i - 1]);//插入
+			else a[i] = new node(a[x]-&gt;val, a[x]-&gt;last);//可持久化
+		}
+		write(a[i]-&gt;val, '\n');
+	}
+	return 0;
+}
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#%E4%BB%A3%E7%A0%81%E5%A6%82%E4%B8%8B">代码如下：</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://YCE3216037.github.io/post/luo-gu-p5737-ti-jie/">
+              <h3 class="post-title">
+                洛谷 P5737 题解
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://YCE3216037.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,445 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>洛谷 P6136 题解 | Gridea</title>
+<link rel="shortcut icon" href="https://YCE3216037.github.io/favicon.ico?v=1584448056213">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://YCE3216037.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="洛谷 P6136 题解 | Gridea - Atom Feed" href="https://YCE3216037.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="首先，推销一下我的新博客：https://yce3216037.github.io/post/luo-gu-p6136-ti-jie
+这道题目怎么能没有AVL树呢？其实，在P3369，我就写了一篇AVL树的题解，链接在这里（第二篇可能没有图..." />
+    <meta name="keywords" content="题解" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://YCE3216037.github.io">
+  <img class="avatar" src="https://YCE3216037.github.io/images/avatar.png?v=1584448056213" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              洛谷 P6136 题解
+            </h2>
+            <div class="post-info">
+              <span>
+                2020-03-17
+              </span>
+              <span>
+                9 min read
+              </span>
+              
+                <a href="https://YCE3216037.github.io/tag/FxiZxcLA2/" class="post-tag">
+                  # 题解
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>首先，推销一下我的新博客：https://yce3216037.github.io/post/luo-gu-p6136-ti-jie</p>
+<p>这道题目怎么能没有AVL树呢？其实，在P3369，我就写了一篇AVL树的题解，链接在这里（第二篇可能没有图片，见谅），我就不再赘述了：<br>
+https://www.luogu.com.cn/blog/YCE-22/solution-p3369<br>
+https://yce3216037.github.io/post/luo-gu-p3369-ti-jie</p>
+<p>唯一需要注意的是，要找排名的数不一定有，所以还需要增加一个查找函数，代码如下：</p>
+<pre><code class="language-cpp">inline AVLtree Find(AVLtree&amp; p, int x) {
+	if (!p) return NULL;//找不到就返回空，否则就返回地址
+	if (p-&gt;data == x) return p;
+	if (p-&gt;data &gt; x) return Find(p-&gt;ls, x);
+	return Find(p-&gt;rs, x);
+}
+inline AVLtree find(int x) {
+	return Find(root, x);
+}
+</code></pre>
+<p>如果找不到这个数，就将这个数改为它的后继，所以，还需要预先加一个极大值来保证能过找到这个排名。</p>
+<h3 id="代码如下">代码如下：</h3>
+<pre><code class="language-cpp">#include&lt;cstdio&gt;
+#include&lt;algorithm&gt;
+#define int long long
+using namespace std;
+FILE *fin, *fout;
+inline int read(int &amp;x) {//快读，这题常数优化很重要
+	char c = 0; int f = x = 0;
+	while (c &lt; 48 || c &gt; 57) {
+		if (c == -1) return 0;
+		if (c == '-') f = 1; c = fgetc(fin);
+	}
+	while (c &gt; 47 &amp;&amp; c &lt; 58) x = (x &lt;&lt; 3) + (x &lt;&lt; 1) + (c &amp; 15), c = fgetc(fin);
+	if (f) x = -x; return 1;
+}
+template&lt;class T, class... Args&gt; inline int read(T &amp;x, Args&amp;... args) {
+	return read(x) + read(args...);
+}
+inline int write(int x) {
+	if (x &lt; 0) return fputc(45, fout), write(-x);
+	if (x &gt; 9) write(x / 10);
+	return fputc((x % 10) | 48, fout), 1;
+}
+struct AVLnode;
+typedef AVLnode* AVLtree;
+struct AVLnode {//这个部分在之前P3369中的题解已经详细讲述了，这里我就不写注释了。
+	int data, high;
+	int freq, size;
+	AVLtree ls, rs;
+	AVLnode(): data(0), high(1), freq(1), size(1), ls(NULL), rs(NULL){}
+	AVLnode(int a): data(a), high(1), freq(1), size(1), ls(NULL), rs(NULL){}
+};
+inline int GetSize(AVLtree p) {
+	if (p == NULL) return 0;
+	return p-&gt;size;
+}
+inline int GetHigh(AVLtree p) {
+	if (p == NULL) return 0;
+	return p-&gt;high;
+}
+struct AVL {
+	AVLtree root;
+	inline void update(AVLtree&amp; p) {
+		p-&gt;size = GetSize(p-&gt;ls) + GetSize(p-&gt;rs) + p-&gt;freq;
+		p-&gt;high = max(GetHigh(p-&gt;ls), GetHigh(p-&gt;rs)) + 1;
+	}
+	inline void LeftPlus(AVLtree&amp; p) {
+		AVLtree q;
+		q = p-&gt;ls;
+		p-&gt;ls = q-&gt;rs;
+		q-&gt;rs = p;
+		update(p);
+		update(q);
+		p = q;
+	}
+	inline void RightPlus(AVLtree&amp; p) {
+		AVLtree q;
+		q = p-&gt;rs;
+		p-&gt;rs = q-&gt;ls;
+		q-&gt;ls = p;
+		update(p);
+		update(q);
+		p = q;
+	}
+	inline void LeftRight(AVLtree&amp; p) {
+		RightPlus(p-&gt;ls);
+		LeftPlus(p);
+	}
+	inline void RightLeft(AVLtree&amp; p) {
+		LeftPlus(p-&gt;rs);
+		RightPlus(p);
+	}
+	inline void Insert(AVLtree &amp;p, int x) {
+		if (p == NULL) {
+			p = new AVLnode(x);
+			return;
+		}
+		if (p-&gt;data == x) {
+			++(p-&gt;freq);
+			update(p);
+			return;
+		}
+		if (p-&gt;data &gt; x) {
+			Insert(p-&gt;ls, x), update(p);
+			if (GetHigh(p-&gt;ls) - GetHigh(p-&gt;rs) == 2) {
+				if (x &lt; p-&gt;ls-&gt;data)
+					LeftPlus(p);
+				else
+					LeftRight(p);
+			}
+		}
+		else {
+			Insert(p-&gt;rs, x), update(p);
+			if (GetHigh(p-&gt;rs) - GetHigh(p-&gt;ls) == 2) {
+				if (x &gt; p-&gt;rs-&gt;data)
+					RightPlus(p);
+				else
+					RightLeft(p);
+			}
+		}
+		update(p);
+	}
+	inline void insert(int x) {
+		Insert(root, x);
+	}
+	inline AVLtree Find(AVLtree&amp; p, int x) {//只不过多了一个查找操作
+		if (!p) return NULL;
+		if (p-&gt;data == x) return p;
+		if (p-&gt;data &gt; x) return Find(p-&gt;ls, x);
+		return Find(p-&gt;rs, x);
+	}
+	inline AVLtree find(int x) {
+		return Find(root, x);
+	}
+	inline void Erase(AVLtree&amp; p, int x) {
+		if (p == NULL) return;
+		if (p-&gt;data &gt; x) {
+			Erase(p-&gt;ls, x), update(p);
+			if (GetHigh(p-&gt;rs) - GetHigh(p-&gt;ls) == 2) {
+				if (GetHigh(p-&gt;rs-&gt;rs) &gt;= GetHigh(p-&gt;rs-&gt;ls))
+					RightPlus(p);
+				else
+					RightLeft(p);
+			}
+		}
+		else if(p-&gt;data &lt; x) {
+			Erase(p-&gt;rs, x), update(p);
+			if (GetHigh(p-&gt;ls) - GetHigh(p-&gt;rs) == 2) {
+				if (GetHigh(p-&gt;ls-&gt;ls) &gt;= GetHigh(p-&gt;ls-&gt;rs))
+					LeftPlus(p);
+				else
+					LeftRight(p);
+			}
+		}
+		else {
+			if (p-&gt;freq &gt; 1) {
+				--(p-&gt;freq);
+				update(p);
+				return;
+			}
+			if (p-&gt;ls &amp;&amp; p-&gt;rs) {
+				AVLtree q = p-&gt;rs;
+				while (q-&gt;ls) q = q-&gt;ls;
+				p-&gt;freq = q-&gt;freq;
+				p-&gt;data = q-&gt;data, q-&gt;freq = 1;
+				Erase(p-&gt;rs, q-&gt;data);
+				update(p);
+				if (GetHigh(p-&gt;ls) - GetHigh(p-&gt;rs) == 2) {
+					if (GetHigh(p-&gt;ls-&gt;ls) &gt;= GetHigh(p-&gt;ls-&gt;rs))
+						LeftPlus(p);
+					else
+						LeftRight(p);
+				}
+			}
+			else {
+				AVLtree q = p;
+				if (p-&gt;ls) p = p-&gt;ls;
+				else if (p-&gt;rs) p = p-&gt;rs;
+				else p = NULL;
+				delete q;
+				q = NULL;
+			}
+		}
+		if (p == NULL) return;
+		update(p);
+	}
+	inline void erase(int x) {
+		Erase(root, x);
+	}
+	inline int get_val(AVLtree p, int rank) {
+		if (GetSize(p-&gt;ls) &gt;= rank) return get_val(p-&gt;ls, rank);
+		if (GetSize(p-&gt;ls) + p-&gt;freq &gt;= rank) return p-&gt;data;
+		return get_val(p-&gt;rs, rank - GetSize(p-&gt;ls) - p-&gt;freq);
+	}
+	inline int GetVal(int rank) {
+		return get_val(root, rank);
+	}
+	inline int get_rank(AVLtree p, int val) {
+		if (p-&gt;data == val) return GetSize(p-&gt;ls) + 1;
+		if (p-&gt;data &gt; val) return get_rank(p-&gt;ls, val);
+		return get_rank(p-&gt;rs, val) + GetSize(p-&gt;ls) + p-&gt;freq;
+	}
+	inline int GetRank(int val) {
+		return get_rank(root, val);
+	}
+	inline int GetPrev(int val) {
+		AVLtree ans = new AVLnode(-1LL &lt;&lt; 42), p = root;
+		while (p) {
+			if (p-&gt;data == val) {
+				if (p-&gt;ls) {
+					p = p-&gt;ls;
+					while (p-&gt;rs)
+						p = p-&gt;rs;
+					ans = p;
+				}
+				break;
+			}
+			if (p-&gt;data &lt; val &amp;&amp; p-&gt;data &gt; ans-&gt;data) ans = p;
+			p = p-&gt;data &lt; val ? p-&gt;rs : p-&gt;ls;
+		}
+		return ans-&gt;data;
+	}
+	inline int GetNext(int val) {
+		AVLtree ans = new AVLnode(1LL &lt;&lt; 42), p = root;
+		while (p) {
+			if (p-&gt;data == val) {
+				if (p-&gt;rs) {
+					p = p-&gt;rs;
+					while (p-&gt;ls)
+						p = p-&gt;ls;
+					ans = p;
+				}
+				break;
+			}
+			if (p-&gt;data &gt; val &amp;&amp; p-&gt;data &lt; ans-&gt;data) ans = p;
+			p = p-&gt;data &lt; val ? p-&gt;rs : p-&gt;ls;
+		}
+		return ans-&gt;data;
+	}
+};
+AVL a;
+int n, m, x, opt, last, ans;
+signed main() {
+	#ifdef ONLINE_JUDGE
+	fin = stdin;
+	fout = stdout;
+	#else
+	fin = fopen(&quot;P6136.in&quot;, &quot;rb&quot;);
+	fout = fopen(&quot;P6136.out&quot;, &quot;wb&quot;);
+	#endif
+	read(n, m), a.insert(1LL &lt;&lt; 42);//极大值先插入
+	for (int i = 1; i &lt;= n; ++i) read(x), a.insert(x);//边读入边插入
+	for (int i = 1; i &lt;= m; ++i) {
+		read(opt, x), x ^= last;//输入经过加密，要先解密
+		switch(opt) {
+			case 1: a.insert(x); break;
+			case 2: a.erase(x); break;
+			case 3:
+				if (!a.find(x)) x = a.GetNext(x);//如果找不到，就改为后继
+				last = a.GetRank(x), ans ^= last; break;
+			case 4: last = a.GetVal(x), ans ^= last; break;
+			case 5: last = a.GetPrev(x), ans ^= last; break;
+			case 6: last = a.GetNext(x), ans ^= last; break;
+		}
+	}
+	write(ans);
+	return 0;
+}
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#%E4%BB%A3%E7%A0%81%E5%A6%82%E4%B8%8B">代码如下：</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://YCE3216037.github.io/post/luo-gu-p3369-ti-jie/">
+              <h3 class="post-title">
+                洛谷 P3369 题解
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://YCE3216037.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

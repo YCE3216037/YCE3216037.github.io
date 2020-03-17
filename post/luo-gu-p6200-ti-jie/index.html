@@ -1,0 +1,233 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>洛谷 P6200 题解 | Gridea</title>
+<link rel="shortcut icon" href="https://YCE3216037.github.io/favicon.ico?v=1584448056213">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://YCE3216037.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="洛谷 P6200 题解 | Gridea - Atom Feed" href="https://YCE3216037.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="推销一下我的新博客：https://yce3216037.github.io/post/luo-gu-p6200-ti-jie/
+这道题就是一道水题，就是说有多少个点，使得在它的正北，正南，正东，正西，东北，东南，西北，西南和该点所连的直线..." />
+    <meta name="keywords" content="题解" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://YCE3216037.github.io">
+  <img class="avatar" src="https://YCE3216037.github.io/images/avatar.png?v=1584448056213" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              洛谷 P6200 题解
+            </h2>
+            <div class="post-info">
+              <span>
+                2020-03-17
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+                <a href="https://YCE3216037.github.io/tag/FxiZxcLA2/" class="post-tag">
+                  # 题解
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>推销一下我的新博客：https://yce3216037.github.io/post/luo-gu-p6200-ti-jie/</p>
+<p>这道题就是一道水题，就是说有多少个点，使得在它的正北，正南，正东，正西，东北，东南，西北，西南和该点所连的直线能覆盖所有点，直接枚举每一个点，然后看一下这个点是否合法即可，时间复杂度为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo>(</mo><msup><mi>n</mi><mn>3</mn></msup><mo>)</mo></mrow><annotation encoding="application/x-tex">O(n^3)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">3</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>。</p>
+<h3 id="代码如下">代码如下：</h3>
+<pre><code class="language-cpp">#include&lt;cstdio&gt;
+using namespace std;
+const int N = 100 + 10;
+FILE *fin, *fout;
+inline int read(int &amp;x) {
+	char c = 0; int f = x = 0;
+	while (c &lt; 48 || c &gt; 57) {
+		if (c == -1) return 0;
+		if (c == '-') f = 1; c = fgetc(fin);
+	}
+	while (c &gt; 47 &amp;&amp; c &lt; 58) x = (x &lt;&lt; 3) + (x &lt;&lt; 1) + (c &amp; 15), c = fgetc(fin);
+	if (f) x = -x; return 1;
+}
+template&lt;class T, class... Args&gt; inline int read(T &amp;x, Args&amp;... args) {
+	return read(x) + read(args...);
+}
+inline int write(int x) {
+	if (x &lt; 0) return fputc(45, fout), write(-x);
+	if (x &gt; 9) write(x / 10);
+	return fputc((x % 10) | 48, fout), 1;
+}
+int n, k, x, y, ans, vis[N][N];//vis[i][j]表示第i行第j列的位置有几个对手
+inline void work(int x, int y) {
+	int res = vis[x][y], temp = vis[x][y]; vis[x][y] = 0;//这个地方的vis[x][y]要先清零，否则可能会被算多次
+	for (int i = 1; i &lt;= n; ++i) res += vis[x][i];
+	for (int i = 1; i &lt;= n; ++i) res += vis[i][y];
+	for (int i = x + 1, j = y + 1; i &lt;= n &amp;&amp; j &lt;= n; ++i, ++j) res += vis[i][j];
+	for (int i = x - 1, j = y + 1; i &amp;&amp; j &lt;= n; --i, ++j) res += vis[i][j];
+	for (int i = x - 1, j = y - 1; i &amp;&amp; j; --i, --j) res += vis[i][j];
+	for (int i = x + 1, j = y - 1; i &lt;= n &amp;&amp; j; ++i, --j) res += vis[i][j];
+    //8个方向的对手数量
+	if (res == k) ++ans; vis[x][y] = temp;//别忘记加回来
+}
+int main() {
+	#ifdef ONLINE_JUDGE
+	fin = stdin;
+	fout = stdout;
+	#else
+	fin = fopen(&quot;P6200.in&quot;, &quot;rb&quot;);
+	fout = fopen(&quot;P6200.out&quot;, &quot;wb&quot;);
+	#endif
+	read(n, k);
+	for (int i = 1; i &lt;= k; ++i) read(x, y), ++vis[x][y];
+	for (int i = 1; i &lt;= n; ++i)
+		for (int j = 1; j &lt;= n; ++j)
+			work(i, j);//枚举每一个点即可
+	write(ans);
+	return 0;
+}
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#%E4%BB%A3%E7%A0%81%E5%A6%82%E4%B8%8B">代码如下：</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://YCE3216037.github.io/post/luo-gu-p6182-ti-jie/">
+              <h3 class="post-title">
+                洛谷 P6182 题解
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://YCE3216037.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
