@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://YCE3216037.github.io</id>
     <title>Gridea</title>
-    <updated>2020-04-17T10:24:41.841Z</updated>
+    <updated>2020-04-17T10:27:19.120Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://YCE3216037.github.io"/>
     <link rel="self" href="https://YCE3216037.github.io/atom.xml"/>
@@ -18,7 +18,7 @@
         <updated>2020-04-17T09:57:54.000Z</updated>
         <content type="html"><![CDATA[<p>题目链接：https://www.luogu.com.cn/problem/P2180</p>
 <p>作为我A掉的第777题，我自然要写一篇题解庆祝一下的。<s>（我是不会告诉你我是因为再不写题解社区贡献分就要掉了才来写题解的）</s></p>
-<p>有一篇题解是有说明的但是Markdown炸了且没lve有代码，另一篇有代码但是没有详细说明，我就来发这篇题解，来详（cu）细（lüe）地解释一下吧。</p>
+<p>有一篇题解是有说明的但是Markdown炸了且没有代码，另一篇有代码但是没有详细说明，我就来发这篇题解，来详（cu）细（lüe）地解释一下吧。</p>
 <p>首先，要明确只有一行不为满的时候答案才可能为最大值，像这样：</p>
 <pre><code>.......
 ...ooo.
